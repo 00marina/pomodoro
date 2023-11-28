@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="author" content="Marina Maric">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro</title>
+    <script src="https://kit.fontawesome.com/1f7b6fc75b.js" crossorigin="anonymous"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            background-color: #12122B;
+            color: #FFD9CE;
+            font-family: Arial, Helvetica, sans-serif;
+            position: relative;
+        }
+
+        #main-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 10px;
+            width: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 25pt;
+            padding: 40px;
+            color: #DB5461;
+        }
+
+        /* control panel */
+        #work-break {
+            width: 200px;
+            border-radius: 25px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 30px;
+            padding: 10px 0;
+            margin: auto 60px;
+            -webkit-box-shadow: 0px 0px 13px 8px #2A2A65; 
+            box-shadow: 0px 0px 13px 8px #2A2A65;
+            
+        }
+
+        .active {
+            color: #DB5461;
+        }
+
+        .inactive {
+            color: gray;
+        }
+
+        /* corcle styles*/
+        #circle1 {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            margin: 50px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            -webkit-box-shadow: 0px 0px 13px 8px #2A2A65; 
+            box-shadow: 0px 0px 13px 8px #2A2A65;
+        }
+
+        #circle2 {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #DB5461;
+        }
+
+        /* pomoforo number style*/
+        #circle2 p {
+            font-size: 30pt;
+            font-weight: bold;
+            color: aliceblue;
+        }
+
+        /* buttons */
+        #button-containter {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        #start, #start-break, #reset, #demo {
+            font-size: 30pt;
+            background-color: transparent;
+            border: none;
+            color: #FFD9CE;
+        }
+
+        #work, #break,  #start, #start-break, #reset:hover {
+            cursor: pointer;
+        }
+
+        #start, #start-break, #reset {
+            display: none;
+        }
+
+
+
+
+          
+    </style>
+</head>
+<body>
+    <div id="main-container">
+        <h1>Pomodoro timer</h1>
+        <div id="work-break">
+            <p id="work" onclick="activateWorkMode()">work</p>
+            <p id="break" onclick="activateBreakMode()">break</p>
+        </div>
+        <div id="circle-container">
+            <div id="circle1">
+                <div id="circle2">
+                    <p id="minutes"></p>
+                    <p>:</p>
+                    <p id="seconds"></p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="button-containter">
+            <button id="demo" onclick="mustPickMode()"><i class="fa-solid fa-play"></i></button>
+            <button id="start" onclick="startWorkTimer()"><i class="fa-solid fa-play"></i></button>
+            <button id="start-break" onclick="startBreakTimer()"><i class="fa-solid fa-play"></i></button>
+            <button id="reset" onclick="resetCounter()"><i class="fa-solid fa-arrow-rotate-right fa-rotate-180"></i></button>
+        </div>
+        
+
+    </div>
+    
+    <script>
+
+        let workTime = 25;
+        let breakTime = 5;
+        let secondsTime = "00";
+
+        // minutes and seconds
+        let minutes = document.getElementById("minutes");
+        let seconds = document.getElementById("seconds");
+
+        // minutes and seconds display
+        minutes.innerHTML = "00";
+        seconds.innerHTML = secondsTime;
+
+        // modes
+        let work = document.getElementById("work");
+        let breaK = document.getElementById("break");
+
+
+        //buttons
+        let workButton = document.getElementById("start");
+        let breakButton = document.getElementById("start-break");
+        let resetButton = document.getElementById("reset");
+        let demoButton = document.getElementById("demo");
+
+        // reset function
+        function resetCounter() {
+            location.reload();
+            workButton.className = "not-used";
+            breakButton.className = "not-used";
+        }
+
+
+        // functions for mode switching
+        function activateWorkMode(){
+            work.className = "active";
+            document.getElementById("break").className = "inactive";
+            workTime = 25;
+            minutes.innerHTML = workTime;
+            workButton.style.display = "flex";
+            breakButton.style.display = "none";
+            demoButton.style.display = "none";
+            resetButton.style.display = "none";
+        };
+
+        function activateBreakMode() {
+            document.getElementById("break").className = "active";
+            work.className = "inactive";
+            breakTime = 5;
+            minutes.innerHTML = breakTime;
+            breakButton.style.display = "flex";
+            workButton.style.display = "none";
+            demoButton.style.display = "none";
+            resetButton.style.display = "none";
+        }
+
+        //timer work
+        function updateWorkTimer() {
+            minutes.innerHTML = workTime;
+            seconds.innerHTML = secondsTime;
+        }
+
+        function startWorkTimer() {
+            workButton.className = "used";
+            workButton.style.display = "none";
+            resetButton.style.display = "flex";
+            secondsTime = 59;
+            workTime -= 1;
+            updateWorkTimer();
+
+            function countdownWork() {
+                if ( workTime > 0 && secondsTime > 0) {
+                    secondsTime--;
+                    updateWorkTimer();
+                } else if ( workTime > 0 && secondsTime == 0){
+                    workTime -= 1;
+                    secondsTime = 61;
+                    secondsTime--;
+                } else if (workTime == 0 && secondsTime > 0) {
+                    secondsTime = 61;
+                    secondsTime--;
+                    updateWorkTimer();
+                } else if (secondsTime == 0 && workTime == 0) {
+                    clearInterval(timerWorkInterval);
+                    
+                    alert("Time for a break!");
+                    activateBreakMode();
+                    resetButton.style.display = "none";
+                } else {
+                    alert("Something went wrong.");
+                    clearInterval(timerWorkInterval);
+                }
+            }
+
+            let timerWorkInterval = setInterval(countdownWork, 1000);
+
+             //mode switching rules
+            if (work.className == "active" && workButton.className == "used") {
+            document.getElementById("break").style.pointerEvents = "none";
+            }
+
+        }
+
+        // break timer
+        function updateBreakTimer() {
+            minutes.innerHTML = breakTime;
+            seconds.innerHTML = secondsTime;
+        }
+
+        function startBreakTimer() {
+            breakButton.className = "used";
+            breakButton.style.display = "none";
+            resetButton.style.display = "flex";
+            secondsTime = 59;
+            breakTime -= 1;
+            updateBreakTimer();
+
+            function countdownBreak() {
+                if ( breakTime > 0 && secondsTime > 0) {
+                    secondsTime--;
+                    updateBreakTimer();
+                } else if (breakTime > 0 && secondsTime == 0) {
+                    breakTime -= 1;
+                    secondsTime = 61;
+                    secondsTime--;
+                } else if (breakTime == 0 && secondsTime > 0) {
+                    breakTime -= 1;
+                    secondsTime = 59;
+                    secondsTime--;
+                    updateBreakTimer();
+                } else if (secondsTime == 0 && breakTime == 0) {
+                    clearInterval(timerBreakInterval);
+                    activateWorkMode();
+                    alert("Time for work!");
+                    resetButton.style.display = "none";
+                } else {
+                    alert("Something went wrong.");
+                    clearInterval(timerBreakInterval);
+                }
+            }
+
+            let timerBreakInterval = setInterval(countdownBreak, 1000);
+
+             //mode switching rules
+            if (breaK.className == "active" && breakButton.className == "used") {
+            work.style.pointerEvents = "none";
+            }
+        }
+
+        // must pick a mode
+        function mustPickMode() {
+            alert("You have to pick a work mode!");
+        }
+
+       
+        
+        
+
+    
+
+
+        
+
+
+
+        
+    </script>
+</body>
+</html>
